@@ -1,0 +1,48 @@
+
+<div class="container col-md-6">
+	<table class="table table-responsive">
+		<thead>
+			<tr>
+				<th ng-click="listCtrl.sort==='name' ? listCtrl.sort='-name' : listCtrl.sort='name'">Nombre
+					<input class="form-control" type="text" ng-model="listCtrl.search.name" />
+				</th>
+				<th ng-click="listCtrl.sort==='job' ? listCtrl.sort='-job' : listCtrl.sort='job'">Trabajo
+					<input class="form-control" type="text" ng-model="listCtrl.search.job" />
+				</th>
+				<th ng-click="listCtrl.sort==='birthdate' ? listCtrl.sort='-birthdate' : listCtrl.sort='birthdate'">
+					Fecha
+					<input class="form-control" type="date" ng-model="listCtrl.search.birthdate" />
+				</th>
+				<th colspan="2" rowspan="2">Acciones</th>
+			</tr>
+
+		</thead>
+		<tbody>
+			<tr ng-repeat="user in listCtrl.users | filter:listCtrl.search | limitTo:listCtrl.numElems:listCtrl.page*listCtrl.numElems | orderBy:listCtrl.sort" ng-class="{odd: $odd, even: $even}">
+				<td>{{user.name}}</td>
+				<td>{{user.job}}</td>
+				<td>{{user.birthdate | date:'dd/MM/yyyy'}}</td>
+				<td>
+					<a class="btn btn-default" type="button" ng-href="#/app/user/create" ng-click="listCtrl.editUser(user.id)">Editar</a>
+				</td>
+				<td>
+					<button class="btn btn-default" type="button" ng-click="listCtrl.removeUser(user)">Borrar</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div>
+		<ul>
+			<li>
+				<span>Núm elem X pág.</span>
+				<select class="texto" ng-model="listCtrl.numElems" ng-init="listCtrl.numElems=5" ng-change="listCtrl.page=0" ng-options="item as item for item in [1,2,3,4,5]">
+
+				</select>
+			</li>
+			<li ng-repeat="item in listCtrl.users | pagination:listCtrl.users.length:listCtrl.numElems">
+				<button class="btn texto" type="button" ng-click="listCtrl.page = $index">{{$index +1}}</button>
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="content" ui-view></div>

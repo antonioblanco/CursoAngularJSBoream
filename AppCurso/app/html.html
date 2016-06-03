@@ -1,0 +1,143 @@
+
+		
+
+
+
+
+		//filtro custom
+app.filter('pagination',[function(){
+	return function (value,numElemntsList, numelmentsPage) {
+		var pages = [];
+		var numPages = Math.ceil(numElemntsList/numelmentsPage);
+		for(var i=0;i<numPages;i++){
+			pages.push(i);
+		}
+		return pages;
+	};
+}]
+);
+
+app.constant('API_URL','http://45.32.235.206:8000/api');
+
+/*app.factory('UserFactory',['$http','API_URL',function($http,API_URL){
+	
+	var getUsers = function (){
+		return $http.get(API_URL +'/users');
+	};
+	
+	var setUser = function (user){
+		return $http.post(API_URL +'/users', user);
+	};
+
+	var getJobs = function(){
+		return $http.get(API_URL +'/jobs');
+	};
+
+	var deleteUser = function (id){
+		return $http.delete(API_URL +'/users/'+ id);
+	};
+	var getUser = function(id){
+
+		return $http.get(API_URL +'/users/'+ id);
+	};
+	var editUser =function(id,user){
+		return $http.put(API_URL +'/users/'+ id, user);
+	};
+	return {
+		getUsers: getUsers,
+		getJobs: getJobs,
+		setUser: setUser,
+		deleteUser: deleteUser,
+		getUser:getUser,
+		editUser:editUser
+	};
+	
+}]);*/
+
+app.factory('UserFactory',['$resource','API_URL',function($resource,API_URL){
+	return $resource(API_URL + '/users/:id', {id: '@id'},{
+		update:{
+			method: 'PUT',
+			params: {
+				id: '@id'
+			}
+		}
+	});
+}]);
+
+app.factory('JobFactory',['$resource','API_URL',function($resource,API_URL){
+	return $resource(API_URL + '/jobs');
+}]);
+
+app.controller('ListCtrl', [ 'UserFactory','$rootScope',function(UserFactory,$rootScope){
+	this.removeUser = function(user){
+		user.$remove().then(function(){
+			updateList();
+		}.bind(this));
+
+		/*UserFactory.deleteUser(id).then(function(){
+			updateList();
+		}.bind(this));*/
+		
+	};
+	/*var updateList = function (){
+		UserFactory.getUsers().then(function(xhr){
+			this.users = xhr.data;
+		}.bind(this), function (err){
+				alert('Error' + err);
+		}.bind(this));
+	}.bind(this);*/
+
+	var updateList = function (){
+		this.users = UserFactory.query();
+	}.bind(this);
+	
+
+	this.editUser = function(id){
+		$rootScope.$emit('user:edit', id);
+
+	};
+	$rootScope.$on('user:update',updateList);
+	updateList();
+}]);
+
+app.controller('ManageCtrl', ['UserFactory','$rootScope','JobFactory', function(UserFactory,$rootScope,JobFactory){
+	/*UserFactory.getJobs().then(function(xhr){
+		this.jobs = xhr.data;
+	}.bind(this));*/
+
+	this.jobs = JobFactory.query();
+
+	this.saveUser = function(){	
+		var promise = null;		
+		
+		if(this.user.id){
+				promise = this.user.$update();	//UserFactory.editUser(this.user.id, this.user);
+			}else{
+				promise =UserFactory.editUser(this.user);
+			};
+		promise.then(function(){
+			this.mensaje="Guardado";
+			this.user = null;
+			this.form.$setPristine();
+			$rootScope.$emit('user:update');
+		}.bind(this));
+	};
+
+	$rootScope.$on('user:edit', function(event, id){
+
+		/*UserFactory.getUser(id).then(function(xhr){
+				this.user =xhr.data;
+				this.user.birthdate = new Date(this.user.birthdate);
+		}.bind(this));*/
+
+
+		this.user = UserFactory.get({id: id});
+		this.user.$promise.then(function(){
+			this.user.birthdate = new Date(this.user.birthdate);
+		}.bind(this));
+		
+
+	}.bind(this));
+
+}]);

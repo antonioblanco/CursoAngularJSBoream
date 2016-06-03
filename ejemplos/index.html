@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Primera App Curso Angular JS Boream</title>
+	<script type="text/javascript" src="../angular-1.5.5/angular.js"></script>
+	<script type="text/javascript" src="../angular-1.5.5/angular-messages.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+</head>
+<body ng-app="App">
+	<div ng-controller="FirstCtrl as firstCtrl">
+		El valor en el contr es: {{firstCtrl.name}}<br>	
+		<hello-class param="{{firstCtrl.name}}" click="firstCtrl.onClick(valor)"></hello-class>
+
+	</div>
+</body>
+</html>

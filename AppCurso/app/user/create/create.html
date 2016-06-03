@@ -1,0 +1,46 @@
+<div class="section">
+	<div class="container col-sm-5">
+		<div class="row col-sm-8 col-sm-offset-2">
+			<form name="manageCtrl.form" novalidate ng-submit="manageCtrl.form.$valid && manageCtrl.saveUser()" class="form" ng-click="manageCtrl.mensaje=''">
+				<label for="name">
+					Nombre:
+				</label>
+				<input class="form-control" name="name" type="text" ng-model="manageCtrl.user.name" ng-minlength="4" ng-required="true" />
+				<label for="job">
+					Trabajo:
+				</label>
+				<select name="job" class="form-control" ng-model="manageCtrl.user.job" ng-options="item as item for item in manageCtrl.jobs" required>
+				</select>
+				<label for="birthdate">
+					Fecha nacimiento:
+				</label>
+				<input type="date" class="form-control" name="birthdate" ng-model="manageCtrl.user.birthdate" required />
+				<div>
+					<input class="btn btn-default" type="submit" value='Guardar'/>
+					<div class="alerta alert alert-success col-sm-6 pull-right" ng-show="manageCtrl.mensaje">{{manageCtrl.mensaje}}
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="section" ng-show="manageCtrl.user && manageCtrl.form.$submitted">
+			<div class="alerta alert alert-warning pull-right col-sm-6" ng-hide="manageCtrl.form.name.$valid">
+				<ng-messages for="manageCtrl.form.name.$error">
+					<ng-message when="pattern">El formato del nombre no es correcto</ng-message>
+					<ng-message when="required">El nombre es obligatorio</ng-message>
+					<ng-message when="minlength">El nombre debe tener mín 4 caracteres</ng-message>
+				</ng-messages>
+			</div>
+			<div class="alerta alert alert-warning col-sm-6 pull-right" ng-hide="manageCtrl.form.job.$valid">
+				<ng-messages for="manageCtrl.form.job.$error">
+					<ng-message when="required">Debe selecionar un job</ng-message>
+				</ng-messages>
+			</div>
+			<div class="alerta alert alert-warning col-sm-6 pull-right" ng-hide="manageCtrl.form.birthdate.$valid">
+				<ng-messages for="manageCtrl.form.birthdate.$error">
+					<ng-message when="required">El birthdate es obligatorio</ng-message>
+				</ng-messages>
+			</div>
+		</div>
+		<!-- <pre>{{manageCtrl.form}}</pre> -->
+	</div>
+</div>
